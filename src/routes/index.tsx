@@ -252,45 +252,56 @@ function LandingPage() {
                 onChange={(v) => update("appsTitle", v)}
                 className="block text-center text-xs tracking-widest text-muted-foreground uppercase lg:text-left"
               />
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {content.apps.map((app, i) => (
-                  <AppCard
-                    key={app.id}
-                    app={app}
-                    onChange={(next) => {
-                      const list = [...content.apps];
-                      list[i] = next;
-                      update("apps", list);
-                    }}
-                    onRemove={() =>
-                      update(
-                        "apps",
-                        content.apps.filter((x) => x.id !== app.id),
-                      )
-                    }
-                  />
-                ))}
-                {isAdmin && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      update("apps", [
-                        ...content.apps,
-                        {
-                          id: `app-${Date.now()}`,
-                          name: "Aplikasi Baru",
-                          platform: "Google Play",
-                          icon: content.logo,
-                          url: "https://play.google.com",
-                        },
-                      ])
-                    }
-                    className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border px-4 py-5 text-xs text-accent transition hover:glow-ring"
-                  >
-                    <Plus className="size-4" /> Tambah Aplikasi
-                  </button>
-                )}
+              <div className="mt-4 grid gap-6 lg:grid-cols-2">
+                {APP_GROUPS.map((group) => {
+                  const items = content.apps.filter(
+                    (a) => appGroupOf(a.platform) === group.key,
+                  );
+                  return (
+                    <div key={group.key} className="space-y-3">
+                      <p className="text-[11px] font-semibold tracking-widest text-accent uppercase">
+                        {group.label}
+                      </p>
+                      {items.length === 0 && !isAdmin && (
+                        <p className="text-xs text-muted-foreground">Segera hadir.</p>
+                      )}
+                      {items.map((app) => (
+                        <AppCard
+                          key={app.id}
+                          app={app}
+                          onChange={(next) =>
+                            update(
+                              "apps",
+                              content.apps.map((x) => (x.id === app.id ? next : x)),
+                            )
+                          }
+                          onRemove={() =>
+                            update(
+                              "apps",
+                              content.apps.filter((x) => x.id !== app.id),
+                            )
+                          }
+                        />
+                      ))}
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => setAddPlatform(group.label)}
+                          className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border px-4 py-4 text-xs text-accent transition hover:glow-ring"
+                        >
+                          <Plus className="size-4" /> Tambah Aplikasi {group.label}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
+              <AddAppDialog
+                platform={addPlatform}
+                onClose={() => setAddPlatform(null)}
+                onSave={(app) => update("apps", [...content.apps, app])}
+              />
+
             </div>
           </div>
         </div>
