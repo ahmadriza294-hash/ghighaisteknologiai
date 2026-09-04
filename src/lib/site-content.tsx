@@ -29,8 +29,8 @@ export type SiteContent = {
   heroSubtitle: string;
   heroPrimaryCta: string;
   heroSecondaryCta: string;
-  appStoreUrl: string;
-  playStoreUrl: string;
+  appsTitle: string;
+  apps: AppItem[];
   aboutTitle: string;
   aboutBody: string;
   aboutStats: { value: string; label: string }[];
