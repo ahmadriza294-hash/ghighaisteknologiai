@@ -112,6 +112,8 @@ export const DEFAULT_CONTENT: SiteContent = {
   contactBody:
     "Ceritakan tantangan digital organisasi Anda. Tim kami akan merespons dalam 1x24 jam kerja.",
   contactEmail: "ghighais@proton.me",
+  contactPhone: "0816988848",
+  contactLocation: "Jakarta, Indonesia",
   trustedTitle: "Dipercaya oleh mitra & klien kami",
   clients: [],
   footerNote: "© 2022–2026 Ghighais Teknologi. Seluruh hak cipta dilindungi.",
