@@ -73,7 +73,7 @@ function Navbar({ onSecretTrigger }: { onSecretTrigger: () => void }) {
             src={content.logo}
             alt="Logo Ghighais Teknologi"
             onChange={(v) => update("logo", v)}
-            imgClassName="h-9 w-auto object-contain"
+            imgClassName="h-9 w-auto rounded-lg object-contain"
           />
         </div>
         <ul className="hidden items-center gap-7 lg:flex">
@@ -192,7 +192,7 @@ function LandingPage() {
               src={content.heroLogo}
               alt="Pratinjau aplikasi Ghighais"
               onChange={(v) => update("heroLogo", v)}
-              imgClassName="h-28 w-auto object-contain sm:h-36"
+              imgClassName="h-28 w-auto rounded-2xl object-contain sm:h-36"
             />
             <div className="flex flex-col items-center gap-3 sm:items-end">
               <p className="text-xs tracking-widest text-muted-foreground uppercase">
