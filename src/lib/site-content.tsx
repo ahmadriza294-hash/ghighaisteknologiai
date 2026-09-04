@@ -11,6 +11,14 @@ import logoAsset from "@/assets/ghighais-logo.png.asset.json";
 
 export type ClientLogo = { id: string; src: string; name: string };
 
+export type AppItem = {
+  id: string;
+  name: string;
+  icon: string;
+  url: string;
+  platform: string;
+};
+
 export type SiteContent = {
   logo: string;
   heroLogo: string;
