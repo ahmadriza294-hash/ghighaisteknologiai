@@ -11,7 +11,41 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { KeyRound, LogOut, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, KeyRound, LogOut, ShieldCheck } from "lucide-react";
+
+function PasswordInput({
+  id,
+  value,
+  onChange,
+  autoComplete = "current-password",
+}: {
+  id: string;
+  value: string;
+  onChange: (v: string) => void;
+  autoComplete?: string;
+}) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative">
+      <Input
+        id={id}
+        type={show ? "text" : "password"}
+        autoComplete={autoComplete}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="pr-10"
+      />
+      <button
+        type="button"
+        onClick={() => setShow((v) => !v)}
+        aria-label={show ? "Sembunyikan password" : "Tampilkan password"}
+        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground transition hover:text-accent"
+      >
+        {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+      </button>
+    </div>
+  );
+}
 
 export function AdminLoginDialog({
   open,
@@ -60,13 +94,7 @@ export function AdminLoginDialog({
           </div>
           <div className="space-y-2">
             <Label htmlFor="admin-pass">Password</Label>
-            <Input
-              id="admin-pass"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <PasswordInput id="admin-pass" value={password} onChange={setPassword} />
           </div>
           <Button type="submit" className="w-full bg-brand-gradient text-primary-foreground">
             Masuk
@@ -121,15 +149,15 @@ export function ChangePasswordDialog({
         >
           <div className="space-y-2">
             <Label htmlFor="cur">Password lama</Label>
-            <Input id="cur" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} />
+            <PasswordInput id="cur" value={current} onChange={setCurrent} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="new">Password baru</Label>
-            <Input id="new" type="password" value={next} onChange={(e) => setNext(e.target.value)} />
+            <PasswordInput id="new" value={next} onChange={setNext} autoComplete="new-password" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="conf">Ulangi password baru</Label>
-            <Input id="conf" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+            <PasswordInput id="conf" value={confirm} onChange={setConfirm} autoComplete="new-password" />
           </div>
           <Button type="submit" className="w-full bg-brand-gradient text-primary-foreground">
             Simpan Password
