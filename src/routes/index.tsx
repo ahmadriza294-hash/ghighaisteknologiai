@@ -573,10 +573,17 @@ function LandingPage() {
             onChange={(v) => update("footerNote", v)}
             className="text-xs text-muted-foreground"
           />
-          <div className="flex items-center gap-5 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-muted-foreground">
             <a href={`mailto:${content.contactEmail}`} className="transition hover:text-accent">
               {content.contactEmail}
             </a>
+            <a
+              href={`tel:${content.contactPhone.replace(/\s/g, "")}`}
+              className="transition hover:text-accent"
+            >
+              {content.contactPhone}
+            </a>
+            <span>{content.contactLocation}</span>
             <a href="#tentang" className="transition hover:text-accent">
               Kebijakan Privasi
             </a>
