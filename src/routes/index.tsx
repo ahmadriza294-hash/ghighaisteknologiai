@@ -3,9 +3,12 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   ArrowRight,
+  Download,
   GraduationCap,
   Lock,
   Mail,
+  MapPin,
+  Phone,
   Plus,
   Sparkles,
   Trash2,
@@ -15,7 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { SiteProvider, useSite, readImageFile } from "@/lib/site-content";
+import {
+  SiteProvider,
+  useSite,
+  readImageFile,
+  type AppItem,
+} from "@/lib/site-content";
 import { Editable, EditableImage } from "@/components/site/Editable";
 import { AdminLoginDialog, AdminToolbar } from "@/components/site/AdminBits";
 
@@ -105,37 +113,79 @@ function Navbar({ onSecretTrigger }: { onSecretTrigger: () => void }) {
   );
 }
 
-function StoreButton({
-  label,
-  sub,
-  url,
+function AppCard({
+  app,
   onChange,
+  onRemove,
 }: {
-  label: string;
-  sub: string;
-  url: string;
-  onChange: (v: string) => void;
+  app: AppItem;
+  onChange: (next: AppItem) => void;
+  onRemove: () => void;
 }) {
   const { isAdmin } = useSite();
   return (
-    <button
-      type="button"
-      onClick={() => {
-        if (isAdmin) {
-          const next = window.prompt(`URL ${label}`, url);
-          if (next !== null) onChange(next.trim());
-        } else {
-          window.open(url, "_blank", "noopener");
-        }
-      }}
-      className="group flex items-center gap-3 rounded-xl glass px-5 py-3 text-left transition hover:glow-ring"
-    >
-      <span className="text-xs text-muted-foreground">
-        {sub}
-        <span className="block text-sm font-semibold text-foreground">{label}</span>
-      </span>
-      {isAdmin && <Wand2 className="size-4 text-accent" />}
-    </button>
+    <div className="group relative flex items-center gap-3 rounded-2xl glass px-4 py-3 transition hover:glow-ring">
+      <EditableImage
+        src={app.icon}
+        alt={`Ikon aplikasi ${app.name}`}
+        onChange={(v) => onChange({ ...app, icon: v })}
+        imgClassName="size-12 rounded-xl object-cover"
+      />
+      <div className="min-w-0">
+        <Editable
+          as="p"
+          value={app.platform}
+          onChange={(v) => onChange({ ...app, platform: v })}
+          className="block text-[11px] tracking-wide text-muted-foreground uppercase"
+        />
+        <Editable
+          as="p"
+          value={app.name}
+          onChange={(v) => onChange({ ...app, name: v })}
+          className="block truncate text-sm font-semibold text-foreground"
+        />
+        {isAdmin ? (
+          <button
+            type="button"
+            onClick={() => {
+              const next = window.prompt(`URL unduhan ${app.name}`, app.url);
+              if (next !== null) onChange({ ...app, url: next.trim() });
+            }}
+            className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-accent"
+          >
+            <Wand2 className="size-3" /> Ubah link
+          </button>
+        ) : (
+          <a
+            href={app.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-accent transition hover:underline"
+          >
+            <Download className="size-3" /> Unduh
+          </a>
+        )}
+      </div>
+      {!isAdmin && (
+        <a
+          href={app.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Unduh ${app.name} di ${app.platform}`}
+          className="absolute inset-0 rounded-2xl"
+        />
+      )}
+      {isAdmin && (
+        <button
+          type="button"
+          aria-label="Hapus aplikasi"
+          onClick={onRemove}
+          className="absolute -top-2 -right-2 inline-flex size-7 items-center justify-center rounded-full bg-destructive text-destructive-foreground"
+        >
+          <Trash2 className="size-3.5" />
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -187,30 +237,59 @@ function LandingPage() {
         </div>
 
         <div className="mt-16 rounded-3xl glass p-6 sm:p-10">
-          <div className="flex flex-col items-center gap-8 sm:flex-row sm:justify-between">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
             <EditableImage
               src={content.heroLogo}
               alt="Pratinjau aplikasi Ghighais"
               onChange={(v) => update("heroLogo", v)}
+              className="mx-auto lg:mx-0"
               imgClassName="h-28 w-auto rounded-2xl object-contain sm:h-36"
             />
-            <div className="flex flex-col items-center gap-3 sm:items-end">
-              <p className="text-xs tracking-widest text-muted-foreground uppercase">
-                Unduh aplikasi kami
-              </p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <StoreButton
-                  label="App Store"
-                  sub="Unduh di"
-                  url={content.appStoreUrl}
-                  onChange={(v) => update("appStoreUrl", v)}
-                />
-                <StoreButton
-                  label="Google Play"
-                  sub="Dapatkan di"
-                  url={content.playStoreUrl}
-                  onChange={(v) => update("playStoreUrl", v)}
-                />
+            <div className="flex-1">
+              <Editable
+                as="p"
+                value={content.appsTitle}
+                onChange={(v) => update("appsTitle", v)}
+                className="block text-center text-xs tracking-widest text-muted-foreground uppercase lg:text-left"
+              />
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {content.apps.map((app, i) => (
+                  <AppCard
+                    key={app.id}
+                    app={app}
+                    onChange={(next) => {
+                      const list = [...content.apps];
+                      list[i] = next;
+                      update("apps", list);
+                    }}
+                    onRemove={() =>
+                      update(
+                        "apps",
+                        content.apps.filter((x) => x.id !== app.id),
+                      )
+                    }
+                  />
+                ))}
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      update("apps", [
+                        ...content.apps,
+                        {
+                          id: `app-${Date.now()}`,
+                          name: "Aplikasi Baru",
+                          platform: "Google Play",
+                          icon: content.logo,
+                          url: "https://play.google.com",
+                        },
+                      ])
+                    }
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border px-4 py-5 text-xs text-accent transition hover:glow-ring"
+                  >
+                    <Plus className="size-4" /> Tambah Aplikasi
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -338,16 +417,35 @@ function LandingPage() {
               onChange={(v) => update("contactBody", v)}
               className="mt-4 block text-muted-foreground"
             />
-            <a
-              href={`mailto:${content.contactEmail}`}
-              className="mt-6 inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-accent"
-            >
-              <Mail className="size-4" />
-              <Editable
-                value={content.contactEmail}
-                onChange={(v) => update("contactEmail", v)}
-              />
-            </a>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href={`mailto:${content.contactEmail}`}
+                className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-accent"
+              >
+                <Mail className="size-4" />
+                <Editable
+                  value={content.contactEmail}
+                  onChange={(v) => update("contactEmail", v)}
+                />
+              </a>
+              <a
+                href={`tel:${content.contactPhone.replace(/\s/g, "")}`}
+                className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-accent"
+              >
+                <Phone className="size-4" />
+                <Editable
+                  value={content.contactPhone}
+                  onChange={(v) => update("contactPhone", v)}
+                />
+              </a>
+              <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-muted-foreground">
+                <MapPin className="size-4 text-accent" />
+                <Editable
+                  value={content.contactLocation}
+                  onChange={(v) => update("contactLocation", v)}
+                />
+              </span>
+            </div>
           </div>
           <form
             className="space-y-4"
@@ -475,10 +573,17 @@ function LandingPage() {
             onChange={(v) => update("footerNote", v)}
             className="text-xs text-muted-foreground"
           />
-          <div className="flex items-center gap-5 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-muted-foreground">
             <a href={`mailto:${content.contactEmail}`} className="transition hover:text-accent">
               {content.contactEmail}
             </a>
+            <a
+              href={`tel:${content.contactPhone.replace(/\s/g, "")}`}
+              className="transition hover:text-accent"
+            >
+              {content.contactPhone}
+            </a>
+            <span>{content.contactLocation}</span>
             <a href="#tentang" className="transition hover:text-accent">
               Kebijakan Privasi
             </a>

@@ -11,6 +11,14 @@ import logoAsset from "@/assets/ghighais-logo.png.asset.json";
 
 export type ClientLogo = { id: string; src: string; name: string };
 
+export type AppItem = {
+  id: string;
+  name: string;
+  icon: string;
+  url: string;
+  platform: string;
+};
+
 export type SiteContent = {
   logo: string;
   heroLogo: string;
@@ -21,8 +29,8 @@ export type SiteContent = {
   heroSubtitle: string;
   heroPrimaryCta: string;
   heroSecondaryCta: string;
-  appStoreUrl: string;
-  playStoreUrl: string;
+  appsTitle: string;
+  apps: AppItem[];
   aboutTitle: string;
   aboutBody: string;
   aboutStats: { value: string; label: string }[];
@@ -32,6 +40,8 @@ export type SiteContent = {
   contactTitle: string;
   contactBody: string;
   contactEmail: string;
+  contactPhone: string;
+  contactLocation: string;
   trustedTitle: string;
   clients: ClientLogo[];
   footerNote: string;
@@ -55,8 +65,23 @@ export const DEFAULT_CONTENT: SiteContent = {
     "Ghighais Teknologi membangun aplikasi yang mudah digunakan siapa saja, dengan pengelolaan data yang rapi, aman, dan siap tumbuh bersama organisasi Anda.",
   heroPrimaryCta: "Mulai Konsultasi Gratis",
   heroSecondaryCta: "Lihat Ekosistem Produk",
-  appStoreUrl: "https://apps.apple.com",
-  playStoreUrl: "https://play.google.com",
+  appsTitle: "Unduh aplikasi kami",
+  apps: [
+    {
+      id: "app-ios",
+      name: "Ghighais Suite",
+      platform: "App Store",
+      icon: logoAsset.url,
+      url: "https://apps.apple.com",
+    },
+    {
+      id: "app-android",
+      name: "Ghighais Suite",
+      platform: "Google Play",
+      icon: logoAsset.url,
+      url: "https://play.google.com",
+    },
+  ],
   aboutTitle: "Dibangun sejak 2022 untuk semua skala organisasi",
   aboutBody:
     "Ghighais Teknologi adalah badan usaha pengembang aplikasi yang berdiri sejak 2022. Kami melayani kebutuhan personal, UMKM, institusi pendidikan, hingga korporasi — mulai dari sistem informasi akademik, aplikasi operasional bisnis, sampai platform data terintegrasi. Fokus kami sederhana: teknologi yang mudah dipakai dan data yang mudah dikelola.",
@@ -87,6 +112,8 @@ export const DEFAULT_CONTENT: SiteContent = {
   contactBody:
     "Ceritakan tantangan digital organisasi Anda. Tim kami akan merespons dalam 1x24 jam kerja.",
   contactEmail: "ghighais@proton.me",
+  contactPhone: "0816988848",
+  contactLocation: "Jakarta, Indonesia",
   trustedTitle: "Dipercaya oleh mitra & klien kami",
   clients: [],
   footerNote: "© 2022–2026 Ghighais Teknologi. Seluruh hak cipta dilindungi.",
