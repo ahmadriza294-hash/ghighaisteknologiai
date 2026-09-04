@@ -87,7 +87,7 @@ function Navbar({ onSecretTrigger }: { onSecretTrigger: () => void }) {
                   value={l.label}
                   onChange={(v) => {
                     const next = [...content.navLinks];
-                    next[i] = { ...next[i], label: v };
+                    next[i] = { ...next[i]!, label: v };
                     update("navLinks", next);
                   }}
                 />
@@ -245,7 +245,7 @@ function LandingPage() {
                   value={s.value}
                   onChange={(v) => {
                     const next = [...content.aboutStats];
-                    next[i] = { ...next[i], value: v };
+                    next[i] = { ...next[i]!, value: v };
                     update("aboutStats", next);
                   }}
                   className="text-3xl font-bold text-gradient"
@@ -255,7 +255,7 @@ function LandingPage() {
                   value={s.label}
                   onChange={(v) => {
                     const next = [...content.aboutStats];
-                    next[i] = { ...next[i], label: v };
+                    next[i] = { ...next[i]!, label: v };
                     update("aboutStats", next);
                   }}
                   className="mt-1 text-sm text-muted-foreground"
@@ -285,7 +285,7 @@ function LandingPage() {
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {content.features.map((f, i) => {
-            const Icon = [GraduationCap, Lock, Sparkles][i % 3];
+            const Icon = [GraduationCap, Lock, Sparkles][i % 3]!;
             return (
               <article
                 key={i}
@@ -299,7 +299,7 @@ function LandingPage() {
                   value={f.title}
                   onChange={(v) => {
                     const next = [...content.features];
-                    next[i] = { ...next[i], title: v };
+                    next[i] = { ...next[i]!, title: v };
                     update("features", next);
                   }}
                   className="mt-5 block text-lg font-semibold"
@@ -310,7 +310,7 @@ function LandingPage() {
                   value={f.body}
                   onChange={(v) => {
                     const next = [...content.features];
-                    next[i] = { ...next[i], body: v };
+                    next[i] = { ...next[i]!, body: v };
                     update("features", next);
                   }}
                   className="mt-3 block text-sm leading-relaxed text-muted-foreground"
@@ -357,11 +357,18 @@ function LandingPage() {
               const name = String(form.get("name") ?? "").trim();
               const email = String(form.get("email") ?? "").trim();
               const message = String(form.get("message") ?? "").trim();
-              if (!name || name.length > 100) return toast.error("Nama wajib diisi (maks 100 karakter)");
-              if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || email.length > 255)
-                return toast.error("Email tidak valid");
-              if (!message || message.length > 1000)
-                return toast.error("Pesan wajib diisi (maks 1000 karakter)");
+              if (!name || name.length > 100) {
+                toast.error("Nama wajib diisi (maks 100 karakter)");
+                return;
+              }
+              if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || email.length > 255) {
+                toast.error("Email tidak valid");
+                return;
+              }
+              if (!message || message.length > 1000) {
+                toast.error("Pesan wajib diisi (maks 1000 karakter)");
+                return;
+              }
               window.location.href = `mailto:${content.contactEmail}?subject=${encodeURIComponent(
                 `Pesan dari ${name}`,
               )}&body=${encodeURIComponent(`${message}\n\n— ${name} (${email})`)}`;
