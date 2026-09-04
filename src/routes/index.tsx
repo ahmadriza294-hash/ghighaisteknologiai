@@ -3,9 +3,12 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   ArrowRight,
+  Download,
   GraduationCap,
   Lock,
   Mail,
+  MapPin,
+  Phone,
   Plus,
   Sparkles,
   Trash2,
