@@ -105,37 +105,79 @@ function Navbar({ onSecretTrigger }: { onSecretTrigger: () => void }) {
   );
 }
 
-function StoreButton({
-  label,
-  sub,
-  url,
+function AppCard({
+  app,
   onChange,
+  onRemove,
 }: {
-  label: string;
-  sub: string;
-  url: string;
-  onChange: (v: string) => void;
+  app: AppItem;
+  onChange: (next: AppItem) => void;
+  onRemove: () => void;
 }) {
   const { isAdmin } = useSite();
   return (
-    <button
-      type="button"
-      onClick={() => {
-        if (isAdmin) {
-          const next = window.prompt(`URL ${label}`, url);
-          if (next !== null) onChange(next.trim());
-        } else {
-          window.open(url, "_blank", "noopener");
-        }
-      }}
-      className="group flex items-center gap-3 rounded-xl glass px-5 py-3 text-left transition hover:glow-ring"
-    >
-      <span className="text-xs text-muted-foreground">
-        {sub}
-        <span className="block text-sm font-semibold text-foreground">{label}</span>
-      </span>
-      {isAdmin && <Wand2 className="size-4 text-accent" />}
-    </button>
+    <div className="group relative flex items-center gap-3 rounded-2xl glass px-4 py-3 transition hover:glow-ring">
+      <EditableImage
+        src={app.icon}
+        alt={`Ikon aplikasi ${app.name}`}
+        onChange={(v) => onChange({ ...app, icon: v })}
+        imgClassName="size-12 rounded-xl object-cover"
+      />
+      <div className="min-w-0">
+        <Editable
+          as="p"
+          value={app.platform}
+          onChange={(v) => onChange({ ...app, platform: v })}
+          className="block text-[11px] tracking-wide text-muted-foreground uppercase"
+        />
+        <Editable
+          as="p"
+          value={app.name}
+          onChange={(v) => onChange({ ...app, name: v })}
+          className="block truncate text-sm font-semibold text-foreground"
+        />
+        {isAdmin ? (
+          <button
+            type="button"
+            onClick={() => {
+              const next = window.prompt(`URL unduhan ${app.name}`, app.url);
+              if (next !== null) onChange({ ...app, url: next.trim() });
+            }}
+            className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-accent"
+          >
+            <Wand2 className="size-3" /> Ubah link
+          </button>
+        ) : (
+          <a
+            href={app.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-accent transition hover:underline"
+          >
+            <Download className="size-3" /> Unduh
+          </a>
+        )}
+      </div>
+      {!isAdmin && (
+        <a
+          href={app.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Unduh ${app.name} di ${app.platform}`}
+          className="absolute inset-0 rounded-2xl"
+        />
+      )}
+      {isAdmin && (
+        <button
+          type="button"
+          aria-label="Hapus aplikasi"
+          onClick={onRemove}
+          className="absolute -top-2 -right-2 inline-flex size-7 items-center justify-center rounded-full bg-destructive text-destructive-foreground"
+        >
+          <Trash2 className="size-3.5" />
+        </button>
+      )}
+    </div>
   );
 }
 
