@@ -18,7 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { SiteProvider, useSite, readImageFile } from "@/lib/site-content";
+import {
+  SiteProvider,
+  useSite,
+  readImageFile,
+  type AppItem,
+} from "@/lib/site-content";
 import { Editable, EditableImage } from "@/components/site/Editable";
 import { AdminLoginDialog, AdminToolbar } from "@/components/site/AdminBits";
 
