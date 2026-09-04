@@ -40,6 +40,8 @@ export type SiteContent = {
   contactTitle: string;
   contactBody: string;
   contactEmail: string;
+  contactPhone: string;
+  contactLocation: string;
   trustedTitle: string;
   clients: ClientLogo[];
   footerNote: string;
