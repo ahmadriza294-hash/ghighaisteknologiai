@@ -417,16 +417,35 @@ function LandingPage() {
               onChange={(v) => update("contactBody", v)}
               className="mt-4 block text-muted-foreground"
             />
-            <a
-              href={`mailto:${content.contactEmail}`}
-              className="mt-6 inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-accent"
-            >
-              <Mail className="size-4" />
-              <Editable
-                value={content.contactEmail}
-                onChange={(v) => update("contactEmail", v)}
-              />
-            </a>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href={`mailto:${content.contactEmail}`}
+                className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-accent"
+              >
+                <Mail className="size-4" />
+                <Editable
+                  value={content.contactEmail}
+                  onChange={(v) => update("contactEmail", v)}
+                />
+              </a>
+              <a
+                href={`tel:${content.contactPhone.replace(/\s/g, "")}`}
+                className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-accent"
+              >
+                <Phone className="size-4" />
+                <Editable
+                  value={content.contactPhone}
+                  onChange={(v) => update("contactPhone", v)}
+                />
+              </a>
+              <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-muted-foreground">
+                <MapPin className="size-4 text-accent" />
+                <Editable
+                  value={content.contactLocation}
+                  onChange={(v) => update("contactLocation", v)}
+                />
+              </span>
+            </div>
           </div>
           <form
             className="space-y-4"
