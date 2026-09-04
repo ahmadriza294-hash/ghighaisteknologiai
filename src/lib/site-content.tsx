@@ -65,8 +65,23 @@ export const DEFAULT_CONTENT: SiteContent = {
     "Ghighais Teknologi membangun aplikasi yang mudah digunakan siapa saja, dengan pengelolaan data yang rapi, aman, dan siap tumbuh bersama organisasi Anda.",
   heroPrimaryCta: "Mulai Konsultasi Gratis",
   heroSecondaryCta: "Lihat Ekosistem Produk",
-  appStoreUrl: "https://apps.apple.com",
-  playStoreUrl: "https://play.google.com",
+  appsTitle: "Unduh aplikasi kami",
+  apps: [
+    {
+      id: "app-ios",
+      name: "Ghighais Suite",
+      platform: "App Store",
+      icon: logoAsset.url,
+      url: "https://apps.apple.com",
+    },
+    {
+      id: "app-android",
+      name: "Ghighais Suite",
+      platform: "Google Play",
+      icon: logoAsset.url,
+      url: "https://play.google.com",
+    },
+  ],
   aboutTitle: "Dibangun sejak 2022 untuk semua skala organisasi",
   aboutBody:
     "Ghighais Teknologi adalah badan usaha pengembang aplikasi yang berdiri sejak 2022. Kami melayani kebutuhan personal, UMKM, institusi pendidikan, hingga korporasi — mulai dari sistem informasi akademik, aplikasi operasional bisnis, sampai platform data terintegrasi. Fokus kami sederhana: teknologi yang mudah dipakai dan data yang mudah dikelola.",
