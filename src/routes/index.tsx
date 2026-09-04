@@ -26,6 +26,113 @@ import {
 } from "@/lib/site-content";
 import { Editable, EditableImage } from "@/components/site/Editable";
 import { AdminLoginDialog, AdminToolbar } from "@/components/site/AdminBits";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+const APP_GROUPS = [
+  { key: "ios", label: "App Store" },
+  { key: "android", label: "Google Play" },
+] as const;
+
+function appGroupOf(platform: string): "ios" | "android" {
+  return /app\s*store|ios|apple/i.test(platform) ? "ios" : "android";
+}
+
+function AddAppDialog({
+  platform,
+  onClose,
+  onSave,
+}: {
+  platform: string | null;
+  onClose: () => void;
+  onSave: (app: AppItem) => void;
+}) {
+  const { content } = useSite();
+  const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
+  const [icon, setIcon] = useState("");
+
+  const close = () => {
+    onClose();
+    setName("");
+    setUrl("");
+    setIcon("");
+  };
+
+  return (
+    <Dialog open={platform !== null} onOpenChange={(v) => !v && close()}>
+      <DialogContent className="glass border-border sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Tambah Aplikasi — {platform}</DialogTitle>
+          <DialogDescription>
+            Unggah logo aplikasi dan tempelkan link unduhannya. Setelah disimpan, aplikasi
+            langsung tampil di halaman publik.
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!name.trim() || !url.trim()) {
+              toast.error("Nama dan link aplikasi wajib diisi");
+              return;
+            }
+            onSave({
+              id: `app-${Date.now()}`,
+              name: name.trim(),
+              platform: platform ?? "Google Play",
+              icon: icon || content.logo,
+              url: url.trim(),
+            });
+            toast.success("Aplikasi ditambahkan");
+            close();
+          }}
+        >
+          <div className="space-y-2">
+            <Label htmlFor="app-name">Nama aplikasi</Label>
+            <Input id="app-name" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="app-url">Link unduhan</Label>
+            <Input
+              id="app-url"
+              placeholder="https://..."
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="app-icon">Logo aplikasi</Label>
+            <div className="flex items-center gap-3">
+              <img
+                src={icon || content.logo}
+                alt="Pratinjau logo aplikasi"
+                className="size-12 rounded-xl object-cover"
+              />
+              <Input
+                id="app-icon"
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setIcon(await readImageFile(file));
+                }}
+              />
+            </div>
+          </div>
+          <Button type="submit" className="w-full bg-brand-gradient text-primary-foreground">
+            Simpan Aplikasi
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -192,6 +299,7 @@ function AppCard({
 function LandingPage() {
   const { content, update, isAdmin } = useSite();
   const [loginOpen, setLoginOpen] = useState(false);
+  const [addPlatform, setAddPlatform] = useState<string | null>(null);
   const clientInput = useRef<HTMLInputElement>(null);
 
   return (
