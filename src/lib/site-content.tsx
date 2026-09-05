@@ -130,6 +130,7 @@ type Ctx = {
   content: SiteContent;
   update: <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => void;
   reset: () => void;
+  save: () => boolean;
   isAdmin: boolean;
   login: (u: string, p: string) => boolean;
   logout: () => void;
