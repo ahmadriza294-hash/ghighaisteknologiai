@@ -22,6 +22,7 @@ import {
   SiteProvider,
   useSite,
   readImageFile,
+  PAMFLET_PLACEHOLDER,
   type AppItem,
 } from "@/lib/site-content";
 import { Editable, EditableImage } from "@/components/site/Editable";
@@ -86,7 +87,7 @@ function AddAppDialog({
               id: `app-${Date.now()}`,
               name: name.trim(),
               platform: platform ?? "Google Play",
-              icon: icon || content.logo,
+              icon: icon || PAMFLET_PLACEHOLDER,
               url: url.trim(),
             });
             toast.success("Aplikasi ditambahkan");
