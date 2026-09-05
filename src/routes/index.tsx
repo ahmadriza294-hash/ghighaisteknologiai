@@ -697,7 +697,7 @@ function LandingPage() {
       <footer>
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center">
           <img
-            src={content.logo}
+            src={LOGO_SRC}
             alt="Ghighais Teknologi"
             className="h-10 w-auto object-contain"
           />
