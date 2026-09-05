@@ -7,7 +7,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import logoAsset from "@/assets/ghighais-logo.png.asset.json";
+/** Static images live in /public and are referenced by absolute, lowercase paths. */
+export const LOGO_SRC = "/ghighais-logo.png";
+export const PAMFLET_PLACEHOLDER = "/placeholder-pamflet.png";
 
 export type ClientLogo = { id: string; src: string; name: string };
 
