@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Eye, EyeOff, KeyRound, LogOut, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, KeyRound, LogOut, Save, ShieldCheck } from "lucide-react";
 
 function PasswordInput({
   id,
