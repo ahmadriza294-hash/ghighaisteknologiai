@@ -7,7 +7,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import logoAsset from "@/assets/ghighais-logo.png.asset.json";
+/** Static images live in /public and are referenced by absolute, lowercase paths. */
+export const LOGO_SRC = "/ghighais-logo.png";
+export const PAMFLET_PLACEHOLDER = "/placeholder-pamflet.png";
 
 export type ClientLogo = { id: string; src: string; name: string };
 
@@ -48,8 +50,8 @@ export type SiteContent = {
 };
 
 export const DEFAULT_CONTENT: SiteContent = {
-  logo: logoAsset.url,
-  heroLogo: logoAsset.url,
+  logo: LOGO_SRC,
+  heroLogo: LOGO_SRC,
   navLinks: [
     { label: "Solusi", href: "#solusi" },
     { label: "Fitur", href: "#fitur" },
@@ -71,14 +73,14 @@ export const DEFAULT_CONTENT: SiteContent = {
       id: "app-ios",
       name: "Ghighais Suite",
       platform: "App Store",
-      icon: logoAsset.url,
+      icon: LOGO_SRC,
       url: "https://apps.apple.com",
     },
     {
       id: "app-android",
       name: "Ghighais Suite",
       platform: "Google Play",
-      icon: logoAsset.url,
+      icon: LOGO_SRC,
       url: "https://play.google.com",
     },
   ],
@@ -128,6 +130,7 @@ type Ctx = {
   content: SiteContent;
   update: <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => void;
   reset: () => void;
+  save: () => boolean;
   isAdmin: boolean;
   login: (u: string, p: string) => boolean;
   logout: () => void;
@@ -178,6 +181,14 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       content,
       update,
       reset: () => persist(DEFAULT_CONTENT),
+      save: () => {
+        try {
+          localStorage.setItem(CONTENT_KEY, JSON.stringify(content));
+          return true;
+        } catch {
+          return false;
+        }
+      },
       isAdmin,
       login: (u, p) => {
         const stored =

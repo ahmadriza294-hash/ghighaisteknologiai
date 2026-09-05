@@ -22,6 +22,7 @@ import {
   SiteProvider,
   useSite,
   readImageFile,
+  PAMFLET_PLACEHOLDER,
   type AppItem,
 } from "@/lib/site-content";
 import { Editable, EditableImage } from "@/components/site/Editable";
@@ -86,7 +87,7 @@ function AddAppDialog({
               id: `app-${Date.now()}`,
               name: name.trim(),
               platform: platform ?? "Google Play",
-              icon: icon || content.logo,
+              icon: icon || PAMFLET_PLACEHOLDER,
               url: url.trim(),
             });
             toast.success("Aplikasi ditambahkan");
@@ -110,7 +111,7 @@ function AddAppDialog({
             <Label htmlFor="app-icon">Logo aplikasi</Label>
             <div className="flex items-center gap-3">
               <img
-                src={icon || content.logo}
+                src={icon || PAMFLET_PLACEHOLDER}
                 alt="Pratinjau logo aplikasi"
                 className="size-12 rounded-xl object-cover"
               />
@@ -625,7 +626,16 @@ function LandingPage() {
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {content.clients.map((c) => (
             <div key={c.id} className="relative flex h-24 items-center justify-center rounded-2xl glass p-4">
-              <img src={c.src} alt={c.name} className="max-h-14 w-auto object-contain" />
+              <img
+                src={c.src || PAMFLET_PLACEHOLDER}
+                alt={c.name}
+                loading="lazy"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (!img.src.endsWith(PAMFLET_PLACEHOLDER)) img.src = PAMFLET_PLACEHOLDER;
+                }}
+                className="max-h-14 w-auto object-contain"
+              />
               {isAdmin && (
                 <button
                   type="button"
@@ -683,9 +693,13 @@ function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-10 sm:flex-row sm:justify-between">
-          <img src={content.logo} alt="Ghighais Teknologi" className="h-8 w-auto object-contain" />
+      <footer>
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center">
+          <img
+            src={content.logo}
+            alt="Ghighais Teknologi"
+            className="h-10 w-auto object-contain"
+          />
           <Editable
             as="p"
             value={content.footerNote}
