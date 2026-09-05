@@ -169,7 +169,7 @@ export function ChangePasswordDialog({
 }
 
 export function AdminToolbar() {
-  const { isAdmin, logout, reset } = useSite();
+  const { isAdmin, logout, reset, save } = useSite();
   const [pwOpen, setPwOpen] = useState(false);
   if (!isAdmin) return null;
 
