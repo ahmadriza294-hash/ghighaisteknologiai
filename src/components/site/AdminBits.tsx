@@ -179,6 +179,16 @@ export function AdminToolbar() {
         <span className="hidden items-center gap-1.5 px-2 text-xs font-medium text-accent sm:flex">
           <ShieldCheck className="size-3.5" /> Mode Edit Admin
         </span>
+        <Button
+          size="sm"
+          className="rounded-full bg-brand-gradient text-xs text-primary-foreground"
+          onClick={() => {
+            if (save()) toast.success("Perubahan tersimpan");
+            else toast.error("Gagal menyimpan perubahan");
+          }}
+        >
+          <Save className="size-3.5" /> Simpan
+        </Button>
         <Button size="sm" variant="ghost" className="rounded-full text-xs" onClick={() => setPwOpen(true)}>
           <KeyRound className="size-3.5" /> Ubah Password
         </Button>
