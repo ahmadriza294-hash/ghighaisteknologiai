@@ -110,7 +110,7 @@ function AddAppDialog({
             <Label htmlFor="app-icon">Logo aplikasi</Label>
             <div className="flex items-center gap-3">
               <img
-                src={icon || content.logo}
+                src={icon || PAMFLET_PLACEHOLDER}
                 alt="Pratinjau logo aplikasi"
                 className="size-12 rounded-xl object-cover"
               />
