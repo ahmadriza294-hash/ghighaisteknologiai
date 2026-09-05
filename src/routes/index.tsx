@@ -22,6 +22,7 @@ import {
   SiteProvider,
   useSite,
   readImageFile,
+  LOGO_SRC,
   PAMFLET_PLACEHOLDER,
   type AppItem,
 } from "@/lib/site-content";
