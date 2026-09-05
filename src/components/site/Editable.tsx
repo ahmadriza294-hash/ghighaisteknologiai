@@ -71,7 +71,18 @@ export function EditableImage({
 
   return (
     <span className={cn("relative inline-flex", className)}>
-      <img src={src} alt={alt} className={imgClassName} />
+      <img
+        src={src || "/placeholder-pamflet.png"}
+        alt={alt}
+        loading="lazy"
+        onError={(e) => {
+          const img = e.currentTarget;
+          if (!img.src.endsWith("/placeholder-pamflet.png")) {
+            img.src = "/placeholder-pamflet.png";
+          }
+        }}
+        className={imgClassName}
+      />
       {isAdmin && (
         <>
           <button

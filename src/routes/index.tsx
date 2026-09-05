@@ -626,7 +626,16 @@ function LandingPage() {
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {content.clients.map((c) => (
             <div key={c.id} className="relative flex h-24 items-center justify-center rounded-2xl glass p-4">
-              <img src={c.src} alt={c.name} className="max-h-14 w-auto object-contain" />
+              <img
+                src={c.src || PAMFLET_PLACEHOLDER}
+                alt={c.name}
+                loading="lazy"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (!img.src.endsWith(PAMFLET_PLACEHOLDER)) img.src = PAMFLET_PLACEHOLDER;
+                }}
+                className="max-h-14 w-auto object-contain"
+              />
               {isAdmin && (
                 <button
                   type="button"
