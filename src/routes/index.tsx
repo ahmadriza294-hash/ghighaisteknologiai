@@ -22,6 +22,7 @@ import {
   SiteProvider,
   useSite,
   readImageFile,
+  LOGO_SRC,
   PAMFLET_PLACEHOLDER,
   type AppItem,
 } from "@/lib/site-content";
@@ -623,9 +624,9 @@ function LandingPage() {
           onChange={(v) => update("trustedTitle", v)}
           className="block text-center text-sm font-semibold tracking-widest text-muted-foreground uppercase"
         />
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-6 sm:gap-8">
           {content.clients.map((c) => (
-            <div key={c.id} className="relative flex h-24 items-center justify-center rounded-2xl glass p-4">
+            <div key={c.id} className="group relative flex h-28 w-40 items-center justify-center">
               <img
                 src={c.src || PAMFLET_PLACEHOLDER}
                 alt={c.name}
@@ -634,7 +635,7 @@ function LandingPage() {
                   const img = e.currentTarget;
                   if (!img.src.endsWith(PAMFLET_PLACEHOLDER)) img.src = PAMFLET_PLACEHOLDER;
                 }}
-                className="max-h-14 w-auto object-contain"
+                className="max-h-20 w-auto object-contain transition group-hover:scale-105 sm:max-h-24"
               />
               {isAdmin && (
                 <button
@@ -658,7 +659,7 @@ function LandingPage() {
               <button
                 type="button"
                 onClick={() => clientInput.current?.click()}
-                className="flex h-24 flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-border text-xs text-accent transition hover:glow-ring"
+                className="flex h-28 w-40 flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-border text-xs text-accent transition hover:glow-ring"
               >
                 <Plus className="size-5" />
                 Tambah Logo Klien
@@ -685,7 +686,7 @@ function LandingPage() {
             </>
           )}
           {!isAdmin && content.clients.length === 0 && (
-            <p className="col-span-full text-center text-sm text-muted-foreground">
+            <p className="w-full text-center text-sm text-muted-foreground">
               Segera hadir — mitra kami akan tampil di sini.
             </p>
           )}
@@ -696,7 +697,7 @@ function LandingPage() {
       <footer>
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center">
           <img
-            src={content.logo}
+            src={LOGO_SRC}
             alt="Ghighais Teknologi"
             className="h-10 w-auto object-contain"
           />
