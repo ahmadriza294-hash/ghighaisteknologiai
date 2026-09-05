@@ -50,8 +50,8 @@ export type SiteContent = {
 };
 
 export const DEFAULT_CONTENT: SiteContent = {
-  logo: logoAsset.url,
-  heroLogo: logoAsset.url,
+  logo: LOGO_SRC,
+  heroLogo: LOGO_SRC,
   navLinks: [
     { label: "Solusi", href: "#solusi" },
     { label: "Fitur", href: "#fitur" },
@@ -73,14 +73,14 @@ export const DEFAULT_CONTENT: SiteContent = {
       id: "app-ios",
       name: "Ghighais Suite",
       platform: "App Store",
-      icon: logoAsset.url,
+      icon: LOGO_SRC,
       url: "https://apps.apple.com",
     },
     {
       id: "app-android",
       name: "Ghighais Suite",
       platform: "Google Play",
-      icon: logoAsset.url,
+      icon: LOGO_SRC,
       url: "https://play.google.com",
     },
   ],
