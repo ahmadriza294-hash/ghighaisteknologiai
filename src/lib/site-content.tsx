@@ -137,7 +137,14 @@ type Ctx = {
   changePassword: (current: string, next: string) => boolean;
 };
 
-const SiteContext = createContext<Ctx | null>(null);
+// Keep one context instance even if this module is evaluated twice
+// (route code-splitting / HMR would otherwise create a second context).
+const globalStore = globalThis as unknown as {
+  __ghighaisSiteContext?: React.Context<Ctx | null>;
+};
+const SiteContext: React.Context<Ctx | null> =
+  globalStore.__ghighaisSiteContext ??
+  (globalStore.__ghighaisSiteContext = createContext<Ctx | null>(null));
 
 export function SiteProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
