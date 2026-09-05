@@ -181,6 +181,14 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       content,
       update,
       reset: () => persist(DEFAULT_CONTENT),
+      save: () => {
+        try {
+          localStorage.setItem(CONTENT_KEY, JSON.stringify(content));
+          return true;
+        } catch {
+          return false;
+        }
+      },
       isAdmin,
       login: (u, p) => {
         const stored =
