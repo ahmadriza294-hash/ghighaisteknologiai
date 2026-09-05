@@ -683,9 +683,13 @@ function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-10 sm:flex-row sm:justify-between">
-          <img src={content.logo} alt="Ghighais Teknologi" className="h-8 w-auto object-contain" />
+      <footer>
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center">
+          <img
+            src={content.logo}
+            alt="Ghighais Teknologi"
+            className="h-10 w-auto object-contain"
+          />
           <Editable
             as="p"
             value={content.footerNote}
