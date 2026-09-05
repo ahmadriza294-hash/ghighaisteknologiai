@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
   type ReactNode,
+  type Context,
 } from "react";
 /** Static images live in /public and are referenced by absolute, lowercase paths. */
 export const LOGO_SRC = "/ghighais-logo.png";
@@ -140,9 +141,9 @@ type Ctx = {
 // Keep one context instance even if this module is evaluated twice
 // (route code-splitting / HMR would otherwise create a second context).
 const globalStore = globalThis as unknown as {
-  __ghighaisSiteContext?: React.Context<Ctx | null>;
+  __ghighaisSiteContext?: Context<Ctx | null>;
 };
-const SiteContext: React.Context<Ctx | null> =
+const SiteContext: Context<Ctx | null> =
   globalStore.__ghighaisSiteContext ??
   (globalStore.__ghighaisSiteContext = createContext<Ctx | null>(null));
 
