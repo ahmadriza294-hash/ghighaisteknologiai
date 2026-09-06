@@ -71,9 +71,9 @@ export function AdminLoginDialog({
         </DialogHeader>
         <form
           className="space-y-4"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            if (login(username, password)) {
+            if (await login(username, password)) {
               toast.success("Mode Edit Admin aktif");
               onOpenChange(false);
               setUsername("");
@@ -130,13 +130,13 @@ export function ChangePasswordDialog({
         </DialogHeader>
         <form
           className="space-y-4"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             if (next !== confirm) {
               toast.error("Konfirmasi password tidak cocok");
               return;
             }
-            if (changePassword(current, next)) {
+            if (await changePassword(current, next)) {
               toast.success("Password berhasil diubah");
               onOpenChange(false);
               setCurrent("");
@@ -182,8 +182,8 @@ export function AdminToolbar() {
         <Button
           size="sm"
           className="rounded-full bg-brand-gradient text-xs text-primary-foreground"
-          onClick={() => {
-            if (save()) toast.success("Perubahan tersimpan");
+          onClick={async () => {
+            if (await save()) toast.success("Perubahan tersimpan & tersinkron");
             else toast.error("Gagal menyimpan perubahan");
           }}
         >
