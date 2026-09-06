@@ -29,7 +29,7 @@ export const fetchSiteContent = createServerFn({ method: "GET" }).handler(
       .eq("id", ROW_ID)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return (data?.data ?? null) as Record<string, unknown> | null;
+    return { json: data?.data ? JSON.stringify(data.data) : null };
   },
 );
 
@@ -53,7 +53,7 @@ export const verifyAdmin = createServerFn({ method: "POST" })
 /** Saves the whole site content after checking the admin password. */
 export const persistSiteContent = createServerFn({ method: "POST" })
   .inputValidator(
-    (input: { password: string; content: Record<string, unknown> }) => input,
+    (input: { password: string; content: string }) => input,
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -67,7 +67,7 @@ export const persistSiteContent = createServerFn({ method: "POST" })
     }
     const { error } = await supabaseAdmin
       .from("site_content")
-      .update({ data: data.content, updated_at: new Date().toISOString() })
+      .update({ data: JSON.parse(data.content), updated_at: new Date().toISOString() })
       .eq("id", ROW_ID);
     if (error) throw new Error(error.message);
     return { ok: true };
