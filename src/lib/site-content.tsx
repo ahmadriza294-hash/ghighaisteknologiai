@@ -123,7 +123,6 @@ export const DEFAULT_CONTENT: SiteContent = {
 };
 
 const CONTENT_KEY = "ghighais.content.v1";
-const PASS_KEY = "ghighais.pass.v1";
 export const ADMIN_USERNAME = "ghighais";
 export const DEFAULT_PASSWORD = "gh1gh415";
 
@@ -131,11 +130,11 @@ type Ctx = {
   content: SiteContent;
   update: <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => void;
   reset: () => void;
-  save: () => boolean;
+  save: () => Promise<boolean>;
   isAdmin: boolean;
-  login: (u: string, p: string) => boolean;
+  login: (u: string, p: string) => Promise<boolean>;
   logout: () => void;
-  changePassword: (current: string, next: string) => boolean;
+  changePassword: (current: string, next: string) => Promise<boolean>;
 };
 
 // Keep one context instance even if this module is evaluated twice
@@ -150,72 +149,102 @@ const SiteContext: Context<Ctx | null> =
 export function SiteProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminPass, setAdminPass] = useState("");
 
+  // Load the shared content from the central store (same on every domain).
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(CONTENT_KEY);
-      if (raw) setContent({ ...DEFAULT_CONTENT, ...JSON.parse(raw) });
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  const persist = useCallback((next: SiteContent) => {
-    setContent(next);
-    try {
-      localStorage.setItem(CONTENT_KEY, JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  const update = useCallback<Ctx["update"]>(
-    (key, value) => {
-      setContent((prev) => {
-        const next = { ...prev, [key]: value };
+    let cancelled = false;
+    (async () => {
+      try {
+        const { fetchSiteContent } = await import("./site-content.functions");
+        const res = await fetchSiteContent();
+        if (cancelled) return;
+        if (res?.json) {
+          const remote = JSON.parse(res.json) as Partial<SiteContent>;
+          if (remote && Object.keys(remote).length > 0) {
+            setContent({ ...DEFAULT_CONTENT, ...remote });
+            try {
+              localStorage.setItem(CONTENT_KEY, res.json);
+            } catch {
+              /* ignore */
+            }
+            return;
+          }
+        }
+        // Nothing saved centrally yet — fall back to this device's copy.
+        const raw = localStorage.getItem(CONTENT_KEY);
+        if (raw) setContent({ ...DEFAULT_CONTENT, ...JSON.parse(raw) });
+      } catch {
         try {
-          localStorage.setItem(CONTENT_KEY, JSON.stringify(next));
+          const raw = localStorage.getItem(CONTENT_KEY);
+          if (raw) setContent({ ...DEFAULT_CONTENT, ...JSON.parse(raw) });
         } catch {
           /* ignore */
         }
-        return next;
-      });
-    },
-    [],
-  );
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const update = useCallback<Ctx["update"]>((key, value) => {
+    setContent((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const value = useMemo<Ctx>(
     () => ({
       content,
       update,
-      reset: () => persist(DEFAULT_CONTENT),
-      save: () => {
+      reset: () => setContent(DEFAULT_CONTENT),
+      save: async () => {
         try {
-          localStorage.setItem(CONTENT_KEY, JSON.stringify(content));
+          const { persistSiteContent } = await import("./site-content.functions");
+          const json = JSON.stringify(content);
+          const res = await persistSiteContent({
+            data: { password: adminPass, content: json },
+          });
+          if (!res.ok) return false;
+          try {
+            localStorage.setItem(CONTENT_KEY, json);
+          } catch {
+            /* ignore */
+          }
           return true;
         } catch {
           return false;
         }
       },
       isAdmin,
-      login: (u, p) => {
-        const stored =
-          (typeof localStorage !== "undefined" &&
-            localStorage.getItem(PASS_KEY)) ||
-          DEFAULT_PASSWORD;
-        const ok = u.trim() === ADMIN_USERNAME && p === stored;
-        if (ok) setIsAdmin(true);
-        return ok;
+      login: async (u, p) => {
+        try {
+          const { verifyAdmin } = await import("./site-content.functions");
+          const res = await verifyAdmin({ data: { username: u, password: p } });
+          if (res.ok) {
+            setAdminPass(p);
+            setIsAdmin(true);
+          }
+          return res.ok;
+        } catch {
+          return false;
+        }
       },
-      logout: () => setIsAdmin(false),
-      changePassword: (current, next) => {
-        const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASSWORD;
-        if (current !== stored || next.length < 6) return false;
-        localStorage.setItem(PASS_KEY, next);
-        return true;
+      logout: () => {
+        setIsAdmin(false);
+        setAdminPass("");
+      },
+      changePassword: async (current, next) => {
+        try {
+          const { updateAdminPassword } = await import("./site-content.functions");
+          const res = await updateAdminPassword({ data: { current, next } });
+          if (res.ok) setAdminPass(next);
+          return res.ok;
+        } catch {
+          return false;
+        }
       },
     }),
-    [content, update, persist, isAdmin],
+    [content, update, isAdmin, adminPass],
   );
 
   return <SiteContext.Provider value={value}>{children}</SiteContext.Provider>;
@@ -226,6 +255,7 @@ export function useSite() {
   if (!ctx) throw new Error("useSite must be used inside SiteProvider");
   return ctx;
 }
+
 
 export function readImageFile(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
