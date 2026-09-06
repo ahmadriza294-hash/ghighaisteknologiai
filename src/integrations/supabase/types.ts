@@ -14,7 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      site_content: {
+        Row: {
+          admin_password: string
+          data: Json
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          admin_password?: string
+          data?: Json
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          admin_password?: string
+          data?: Json
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
